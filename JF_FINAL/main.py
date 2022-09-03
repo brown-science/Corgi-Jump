@@ -144,8 +144,8 @@ player.add(Player())
 
 obstacle_group = pygame.sprite.Group()
 
-sky_surf = pygame.image.load('./graphics/sky.png').convert_alpha()  # converts to form python reads better
-ground_surf = pygame.image.load('./graphics/ground.png').convert_alpha()
+back_surf = pygame.image.load('./graphics/background.png').convert_alpha()  # converts to form python reads better
+#ground_surf = pygame.image.load('./graphics/ground.png').convert_alpha()
 
 # score_surf = test_font.render("Jumpin' Fettys", False, 'Blue')  # text, anti alias(smooth text edges), color
 # score_rect = score_surf.get_rect(center = (400, 60))
@@ -240,8 +240,8 @@ while True:
 
 
     if game_active:
-        screen.blit(sky_surf, (0, 0)) # surface, (x,y) # blit means block image transfer # puts one surface on another
-        screen.blit(ground_surf, (0, 300))
+        screen.blit(back_surf, (0, 0)) # surface, (x,y) # blit means block image transfer # puts one surface on another
+        #screen.blit(ground_surf, (0, 300))
         score = display_score()
         bg_music = pygame.mixer.Sound('./audio/music.wav')
         bg_music.set_volume(0.1)
