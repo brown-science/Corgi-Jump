@@ -12,11 +12,11 @@ from random import randint, choice
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        player_walk_1 = pygame.image.load('./graphics/player/player_walk_1.png').convert_alpha()
-        player_walk_2 = pygame.image.load('./graphics/player/player_walk_2.png').convert_alpha()
+        player_walk_1 = pygame.image.load('Art/player/player_walk_1.png').convert_alpha()
+        player_walk_2 = pygame.image.load('Art/player/player_walk_2.png').convert_alpha()
         self.player_walk = [player_walk_1, player_walk_2]
         self.player_index = 0
-        self.player_jump = pygame.image.load('./graphics/player/jump.png').convert_alpha()
+        self.player_jump = pygame.image.load('Art/player/jump.png').convert_alpha()
 
         self.image = self.player_walk[self.player_index]
         self.rect = self.image.get_rect(midbottom = (80, 300))
@@ -56,14 +56,14 @@ class Obstacle(pygame.sprite.Sprite):
         super().__init__()
 
         if type == "fly":
-            fly_1 = pygame.image.load('./graphics/fly/fly1.png').convert_alpha()
-            fly_2 = pygame.image.load('./graphics/fly/fly2.png').convert_alpha()
+            fly_1 = pygame.image.load('Art/fly/fly1.png').convert_alpha()
+            fly_2 = pygame.image.load('Art/fly/fly2.png').convert_alpha()
             self.frames = [fly_1, fly_2]
             y_pos = 210
         else:
-            snail_1 = pygame.image.load('./graphics/snail/Fetti1(1).png').convert_alpha()
+            snail_1 = pygame.image.load('Art/snail/Fetti1(1).png').convert_alpha()
             snail_1 = pygame.transform.rotozoom(snail_1, 0, 2)
-            snail_2 = pygame.image.load('./graphics/snail/Final Fetti (2).png').convert_alpha()
+            snail_2 = pygame.image.load('Art/snail/Final Fetti (2).png').convert_alpha()
             snail_2 = pygame.transform.rotozoom(snail_2, 0, 2)
             self.frames = [snail_1, snail_2]
             y_pos = 300
@@ -144,22 +144,22 @@ player.add(Player())
 
 obstacle_group = pygame.sprite.Group()
 
-back_surf = pygame.image.load('./graphics/background.png').convert_alpha()  # converts to form python reads better
-#ground_surf = pygame.image.load('./graphics/ground.png').convert_alpha()
+back_surf = pygame.image.load('Art/background.png').convert_alpha()  # converts to form python reads better
+#ground_surf = pygame.image.load('./Art/ground.png').convert_alpha()
 
 # score_surf = test_font.render("Jumpin' Fettys", False, 'Blue')  # text, anti alias(smooth text edges), color
 # score_rect = score_surf.get_rect(center = (400, 60))
 
 # Snail
-snail_frame_1 = pygame.image.load('./graphics/snail/snail1.png').convert_alpha()
-snail_frame_2 = pygame.image.load('./graphics/snail/snail2.png').convert_alpha()
+snail_frame_1 = pygame.image.load('Art/snail/snail1.png').convert_alpha()
+snail_frame_2 = pygame.image.load('Art/snail/snail2.png').convert_alpha()
 snail_frames = [snail_frame_1, snail_frame_2]
 snail_frame_index = 0
 snail_surf = snail_frames[snail_frame_index]
 
 # Fly
-fly_frame_1 = pygame.image.load('./graphics/fly/fly1.png').convert_alpha()
-fly_frame_2 = pygame.image.load('./graphics/fly/fly2.png').convert_alpha()
+fly_frame_1 = pygame.image.load('Art/fly/fly1.png').convert_alpha()
+fly_frame_2 = pygame.image.load('Art/fly/fly2.png').convert_alpha()
 fly_frames = [fly_frame_1, fly_frame_2]
 fly_frame_index = 0
 fly_surf = fly_frames[fly_frame_index]
@@ -168,18 +168,18 @@ fly_surf = fly_frames[fly_frame_index]
 obstacle_rect_list = []
 
 
-player_walk_1 = pygame.image.load('./graphics/player/player_walk_1.png').convert_alpha()
-player_walk_2 = pygame.image.load('./graphics/player/player_walk_2.png').convert_alpha()
+player_walk_1 = pygame.image.load('Art/player/player_walk_1.png').convert_alpha()
+player_walk_2 = pygame.image.load('Art/player/player_walk_2.png').convert_alpha()
 player_walk = [player_walk_1, player_walk_2]
 player_index = 0
-player_jump = pygame.image.load('./graphics/player/jump.png').convert_alpha()
+player_jump = pygame.image.load('Art/player/jump.png').convert_alpha()
 
 player_surf = player_walk[player_index]
 player_rect = player_surf.get_rect(midbottom = (80, 300))
 player_gravity = 0
 
 #Intro screen
-player_stand = pygame.image.load('./graphics/player/player_stand.png').convert_alpha()
+player_stand = pygame.image.load('Art/player/player_stand.png').convert_alpha()
 player_stand = pygame.transform.rotozoom(player_stand, 0, 2) # surface, angle, scale
 player_stand_rect = player_stand.get_rect(center = (400,200))
 
