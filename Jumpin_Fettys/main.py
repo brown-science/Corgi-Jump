@@ -151,8 +151,8 @@ back_surf = pygame.image.load('Art/background.png').convert_alpha()  # converts 
 # score_rect = score_surf.get_rect(center = (400, 60))
 
 # Snail
-snail_frame_1 = pygame.image.load('Art/snail/snail1.png').convert_alpha()
-snail_frame_2 = pygame.image.load('Art/snail/snail2.png').convert_alpha()
+snail_frame_1 = pygame.image.load('Art/snail/Fetti1(1).png').convert_alpha()
+snail_frame_2 = pygame.image.load('Art/snail/Fetti 2.png').convert_alpha()
 snail_frames = [snail_frame_1, snail_frame_2]
 snail_frame_index = 0
 snail_surf = snail_frames[snail_frame_index]
@@ -262,9 +262,9 @@ while True:
 
     else:
         screen.fill((94,129,162)) #rgb color
-        screen.blit(player_stand, player_stand_rect)
+        screen.blit(snail_frame_1, player_stand_rect)
         obstacle_rect_list.clear()
-        player_rect.midbottom = (80, 300) # in case you die during jump
+        player_rect.midbottom = (600, 300) # in case you die during jump
         player_gravity = 0 # in case you die suring jump
 
         score_message = test_font.render(f'Your score:  {score}', False, 'Blue')
