@@ -1,9 +1,9 @@
 # Author: John Brown
-# Artist: Amber Vue Brown
+# Artists: John Brown and Amber Vue Brown
 # GitHub username: brown-science
 # Date: 6/20/2022
-# Description: Modified game from "The ultimate introduction to Pygame"
-# YouTube tutorial published by the Clear Code channel
+# Description: Modified game from "The ultimate introduction to Pygame" YouTube tutorial published by the
+#              Clear Code channel.
 
 import pygame
 from sys import exit
