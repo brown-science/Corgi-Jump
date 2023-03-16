@@ -116,7 +116,7 @@ def player_animation():
 
 pygame.init()
 screen = pygame.display.set_mode((1200,471))
-pygame.display.set_caption('Runner')
+pygame.display.set_caption("Jumpin' Confetti0")
 clock = pygame.time.Clock()
 test_font = pygame.font.Font('./Jumpin_Confetti/font/Pixeltype.ttf', 50)
 game_active = False
