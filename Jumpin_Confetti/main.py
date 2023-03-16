@@ -1,277 +1,255 @@
-# Author: John Brown
-# Artists: John Brown and Amber Vue Brown
-# GitHub username: brown-science
-# Date: 6/20/2022
-# Description: Modified game from "The ultimate introduction to Pygame" YouTube tutorial published by the
-#              Clear Code channel.
-
 import pygame
+import math
 from sys import exit
 from random import randint, choice
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self):
-        super().__init__()
-        player_walk_1 = pygame.image.load('./Jumpin_Confetti/Art/player/player_walk_1.png').convert_alpha()
-        player_walk_2 = pygame.image.load('./Jumpin_Confetti/Art/player/player_walk_2.png').convert_alpha()
-        self.player_walk = [player_walk_1, player_walk_2]
-        self.player_index = 0
-        self.player_jump = pygame.image.load('./Jumpin_Confetti/Art/player/jump.png').convert_alpha()
+	def __init__(self):
+		super().__init__()
+		player_walk_1 = pygame.image.load('./Jumpin_Confetti/assets/Player/walk-1-md.png').convert_alpha()
+		player_walk_2 = pygame.image.load('./Jumpin_Confetti/assets/Player/walk-2-md.png').convert_alpha()
+		self.player_walk = [player_walk_1, player_walk_2]
+		self.player_index = 0
+		self.player_jump = pygame.image.load('./Jumpin_Confetti/assets/Player/jump-md2.png').convert_alpha()
 
-        self.image = self.player_walk[self.player_index]
-        self.rect = self.image.get_rect(midbottom = (80, 300))
-        self.gravity = 0
+		self.image = self.player_walk[self.player_index]
+		self.rect = self.image.get_rect(midbottom = (80,420))
+		self.gravity = 0
 
-        self.jump_sound = pygame.mixer.Sound('./Jumpin_Confetti/audio/jump.mp3')
-        #self.jump_sound.set_volume( )
+		self.jump_sound = pygame.mixer.Sound('./Jumpin_Confetti/audio/jump.mp3')
+		self.jump_sound.set_volume(0.5)
 
-    def player_input(self):
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_SPACE] and self.rect.bottom >= 300:
-            self.gravity = -20
-            self.jump_sound.play()
+	def player_input(self):
+		keys = pygame.key.get_pressed()
+		if keys[pygame.K_SPACE] and self.rect.bottom >= 420:
+			self.gravity = -20
+			self.jump_sound.play()
 
+	def apply_gravity(self):
+		self.gravity += 1
+		self.rect.y += self.gravity
+		if self.rect.bottom >= 420:
+			self.rect.bottom = 420
 
-    def apply_gravity(self):
-        self.gravity += 1
-        self.rect.y += self.gravity
-        if self.rect.bottom >= 300:
-            self.rect.bottom = 300
+	def animation_state(self):
+		if self.rect.bottom < 420: 
+			self.image = self.player_jump
+		else:
+			self.player_index += 0.1
+			if self.player_index >= len(self.player_walk):self.player_index = 0
+			self.image = self.player_walk[int(self.player_index)]
 
-    def update(self):
-        self.player_input()
-        self.apply_gravity()
-        self.animation_state()
-
-    def animation_state(self):
-        if self.rect.bottom < 300:
-            self.image = self.player_jump
-        else:
-            self.player_index += 0.1
-            if self.player_index >= len(self.player_walk): self.player_index = 0
-            self.image = self.player_walk[int(self.player_index)]
+	def update(self):
+		self.player_input()
+		self.apply_gravity()
+		self.animation_state()
 
 class Obstacle(pygame.sprite.Sprite):
-    def __init__(self, type):
-        super().__init__()
+	def __init__(self,type):
+		super().__init__()
+		dog_1 = pygame.image.load('./Jumpin_Confetti/assets/Dog/Confetti-1-sm.png').convert_alpha()
+		dog_2 = pygame.image.load('./Jumpin_Confetti/assets/Dog/Confetti-2-sm.png').convert_alpha()
+		dog_3 = pygame.image.load('./Jumpin_Confetti/assets/Dog/Confetti-3-sm.png').convert_alpha()
+		self.frames = [dog_1, dog_2, dog_3]
+		y_pos  = 420
 
-        if type == "fly":
-            fly_1 = pygame.image.load('./Jumpin_Confetti/Art/fly/fly1.png').convert_alpha()
-            fly_2 = pygame.image.load('./Jumpin_Confetti/Art/fly/fly2.png').convert_alpha()
-            self.frames = [fly_1, fly_2]
-            y_pos = 210
-        else:
-            snail_1 = pygame.image.load('./Jumpin_Confetti/Art/snail/Fetti1(1).png').convert_alpha()
-            snail_1 = pygame.transform.rotozoom(snail_1, 0, 2)
-            snail_2 = pygame.image.load('./Jumpin_Confetti/Art/snail/pixil-frame-0.png').convert_alpha()
-            snail_2 = pygame.transform.rotozoom(snail_2, 0, 2)
-            self.frames = [snail_1, snail_2]
-            y_pos = 300
+		self.animation_index = 0
+		self.image = self.frames[self.animation_index]
+		self.rect = self.image.get_rect(midbottom = (randint(900,1100),y_pos))
 
-        self.animation_index = 0
-        self.image = self.frames[self.animation_index]
-        self.rect = self.image.get_rect(midbottom = (randint(900, 1100), y_pos))
+	def animation_state(self):
+		self.animation_index += 0.1 
+		if self.animation_index >= len(self.frames): self.animation_index = 0
+		self.image = self.frames[int(self.animation_index)]
 
-    def animation_state(self):
-        self.animation_index += 0.1
-        if self.animation_index >= len(self.frames): self.animation_index = 0
-        self.image = self.frames[int(self.animation_index)]
+	def update(self):
+		self.animation_state()
+		self.rect.x -= 8
+		self.destroy()
 
-    def update(self):
-        self.animation_state()
-        self.rect.x -= 8
-        self.destroy()
+	def destroy(self):
+		if self.rect.x <= -100: 
+			self.kill()
 
-    def destroy(self):
-        if self.rect.x <= -100:
-            self.kill
 
 def display_score():
-    current_time = int(pygame.time.get_ticks() / 1000) - start_time
-    score_surf = test_font.render('Score:  ' f'{current_time}', False, 'Blue')
-    score_rect = score_surf.get_rect(center = (400, 60))
-    screen.blit(score_surf, score_rect)
-    return current_time
+	current_time = int(pygame.time.get_ticks() / 1000) - start_time
+	score_surf = test_font.render(f'Score: {current_time}',False,(64, 83, 102))
+	score_rect = score_surf.get_rect(center = (600,50))
+	screen.blit(score_surf,score_rect)
+	return current_time
 
-# def obstacle_movement(obstacle_list):
-#     if obstacle_list: #If list is not empty, empty list = False in python
-#         for obstacle_rect in obstacle_list:
-#             obstacle_rect.x -= 6
-#
-#             if obstacle_rect.bottom == 300: screen.blit(snail_surf, obstacle_rect)
-#             else: screen.blit(fly_surf, obstacle_rect)
-#
-#         obstacle_list = [obstacle for obstacle in obstacle_list if obstacle.x > -100]
-#
-#         return obstacle_list
-#     else: return []
+def obstacle_movement(obstacle_list):
+	if obstacle_list:
+		for obstacle_rect in obstacle_list:
+			obstacle_rect.x -= 5
 
-# #def collisions(player, obstacles):
-#     if obstacles:
-#         for obstacle_rect in obstacles:
-#             if player.colliderect(obstacle_rect): return False
-#     return True
+			if obstacle_rect.bottom == 420: screen.blit(dog_surf,obstacle_rect)
+			else: screen.blit(obstacle_rect)
+
+		obstacle_list = [obstacle for obstacle in obstacle_list if obstacle.x > -100]
+
+		return obstacle_list
+	else: return []
+
+def collisions(player,obstacles):
+	if obstacles:
+		for obstacle_rect in obstacles:
+			if player.colliderect(obstacle_rect): return False
+	return True
 
 def collision_sprite():
-    if pygame.sprite.spritecollide(player.sprite, obstacle_group, False): #returns empty list if no collision
-        obstacle_group.empty()
-        return  False
-    else: return True
+	if pygame.sprite.spritecollide(player.sprite,obstacle_group,False):
+		obstacle_group.empty()
+		return False
+	else: return True
 
 def player_animation():
-    global player_surf, player_index
-    """Play walking animation if player on floor"""
-    # Play jump if player not on floor
-    if player_rect.bottom < 300: #jump
-        player_surf = player_jump
-    else:
-        player_index += 0.1
-        if player_index >= len(player_walk): player_index = 0
-        player_surf = player_walk[int(player_index )]
+	global player_surf, player_index
 
-pygame.init() # ESSENTIAL initiates how to display images, play sound, etc
-screen = pygame.display.set_mode((800, 400))  # width, height of game window
-pygame.display.set_caption("Jumpin' Confetti")
-clock = pygame.time.Clock() # creates a clock object of the class Clock
-test_font = pygame.font.Font('./Jumpin_Confetti/font/Pixeltype.ttf', 50)  # font type, font size
+	if player_rect.bottom < 420:
+		player_surf = player_jump
+	else:
+		player_index += 0.1
+		if player_index >= len(player_walk):player_index = 0
+		player_surf = player_walk[int(player_index)]
+
+pygame.init()
+screen = pygame.display.set_mode((1200,471))
+pygame.display.set_caption('Runner')
+clock = pygame.time.Clock()
+test_font = pygame.font.Font('./Jumpin_Confetti/font/Pixeltype.ttf', 50)
 game_active = False
 start_time = 0
 score = 0
+bg_music = pygame.mixer.Sound('./Jumpin_Confetti/audio/music.wav')
+bg_music.play(loops = -1)
 
-# Groups
+#Groups
 player = pygame.sprite.GroupSingle()
 player.add(Player())
 
 obstacle_group = pygame.sprite.Group()
 
-back_surf = pygame.image.load('./Jumpin_Confetti/Art/background.png').convert_alpha()  # converts to form python reads better
-#ground_surf = pygame.image.load('./Art/ground.png').convert_alpha()
+back_trees_surface = pygame.image.load('./Jumpin_Confetti/assets/Background/forest-back-trees.png').convert_alpha()
+sky_surface = pygame.image.load('./Jumpin_Confetti/assets/Background/forest-lights.png').convert_alpha()
+mid_trees_surface = pygame.image.load('./Jumpin_Confetti/assets/Background/forest-middle-trees.png').convert_alpha()
+front_trees_surface = pygame.image.load('./Jumpin_Confetti/assets/Background/forest-front-trees.png').convert_alpha()
 
-# score_surf = test_font.render("Jumpin' Fettys", False, 'Blue')  # text, anti alias(smooth text edges), color
-# score_rect = score_surf.get_rect(center = (400, 60))
+back_width = back_trees_surface.get_width()
+tiles = math.ceil(1200 / back_width) + 1
+scroll = 0
 
-# Snail
-snail_frame_1 = pygame.image.load('./Jumpin_Confetti/Art/snail/pixil-frame-0.png').convert_alpha()
-snail_frame_2 = pygame.image.load('./Jumpin_Confetti/Art/snail/Fetti 2.png').convert_alpha()
-snail_frames = [snail_frame_1, snail_frame_2]
-snail_frame_index = 0
-snail_surf = snail_frames[snail_frame_index]
 
-# Fly
-fly_frame_1 = pygame.image.load('./Jumpin_Confetti/Art/fly/fly1.png').convert_alpha()
-fly_frame_2 = pygame.image.load('./Jumpin_Confetti/Art/fly/fly2.png').convert_alpha()
-fly_frames = [fly_frame_1, fly_frame_2]
-fly_frame_index = 0
-fly_surf = fly_frames[fly_frame_index]
-
+# dog 
+dog_frame_1 = pygame.image.load('./Jumpin_Confetti/assets/Dog/Confetti-1-sm.png').convert_alpha()
+dog_frame_2 = pygame.image.load('./Jumpin_Confetti/assets/Dog/Confetti-2-sm.png').convert_alpha()
+dog_frame_3 = pygame.image.load('./Jumpin_Confetti/assets/Dog/Confetti-3-sm.png').convert_alpha()
+dog_frames = [dog_frame_1, dog_frame_2, dog_frame_3]
+dog_frame_index = 0
+dog_surf = dog_frames[dog_frame_index]
 
 obstacle_rect_list = []
 
 
-player_walk_1 = pygame.image.load('./Jumpin_Confetti/Art/player/player_walk_1.png').convert_alpha()
-player_walk_2 = pygame.image.load('./Jumpin_Confetti/Art/player/player_walk_2.png').convert_alpha()
+player_walk_1 = pygame.image.load('./Jumpin_Confetti/assets/Player/walk-1-md.png').convert_alpha()
+player_walk_2 = pygame.image.load('./Jumpin_Confetti/assets/Player/walk-2-md.png').convert_alpha()
 player_walk = [player_walk_1, player_walk_2]
 player_index = 0
-player_jump = pygame.image.load('./Jumpin_Confetti/Art/player/jump.png').convert_alpha()
+player_jump = pygame.image.load('./Jumpin_Confetti/assets/Player/jump-md2.png').convert_alpha()
 
 player_surf = player_walk[player_index]
-player_rect = player_surf.get_rect(midbottom = (80, 300))
+player_rect = player_surf.get_rect(midbottom = (80,420))
 player_gravity = 0
 
-#Intro screen
-player_stand = pygame.image.load('./Jumpin_Confetti/Art/player/player_stand.png').convert_alpha()
-player_stand = pygame.transform.rotozoom(player_stand, 0, 2) # surface, angle, scale
-player_stand_rect = player_stand.get_rect(center = (400,200))
+# Intro screen
+Confetti = pygame.image.load('./Jumpin_Confetti/assets/Dog/Confetti_1_md.png').convert_alpha()
+Confetti = pygame.transform.rotozoom(Confetti,0,2)
+Confetti_rect = Confetti.get_rect(center = (600,235))
 
-title_surf = test_font.render("Jumpin' Confetti", False, 'Blue')  # text, anti alias(smooth text edges), color
-title_rect = title_surf.get_rect(center = (400, 60))
+game_name = test_font.render("Jumpin' Confetti",False,(111,196,169))
+game_name_rect = game_name.get_rect(center = (600,40))
 
-instruction_surf = test_font.render("Press space to jump", False, 'Blue')
-instruction_rect = instruction_surf.get_rect(center = (400, 340))
+game_message = test_font.render('Press space to run',False,(111,196,169))
+game_message_rect = game_message.get_rect(center = (600,450))
 
-# Timers
+# Timer 
 obstacle_timer = pygame.USEREVENT + 1
-pygame.time.set_timer(obstacle_timer, 1400)
+pygame.time.set_timer(obstacle_timer,1500)
 
-snail_animation_timer = pygame.USEREVENT + 2
-pygame.time.set_timer(snail_animation_timer, 500)
+dog_animation_timer = pygame.USEREVENT + 2
+pygame.time.set_timer(dog_animation_timer,500)
 
-fly_animation_timer = pygame.USEREVENT + 3
-pygame.time.set_timer(fly_animation_timer, 200)
 
 
 while True:
-    # draw all elements, update everything
-    # everything under while loop will be displayed to user
-    for event in pygame.event.get(): # pygame.event.get() gets all possible user inputs. This is an event loop, with every frame, it checks player input and then uses the code below to generate an image.
-        if event.type == pygame.QUIT: # pygame.QUIT is synonomus to X button
-            pygame.quit()
-            exit() # sys module that closes code
-        if game_active:
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if player_rect.collidepoint(event.pos) and player_rect.bottom >= 300: player_gravity = -20
+	for event in pygame.event.get():
+		if event.type == pygame.QUIT:
+			pygame.quit()
+			exit()
+		
+		if game_active:
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				if player_rect.collidepoint(event.pos) and player_rect.bottom >= 420: 
+					player_gravity = -20
+			
+			if event.type == pygame.KEYDOWN:
+				if event.key == pygame.K_SPACE and player_rect.bottom >= 420:
+					player_gravity = -20
+		else:
+			if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+				game_active = True
+				
+				start_time = int(pygame.time.get_ticks() / 1000)
 
-            # if event.type == pygame.KEYDOWN:
-            #     if event.key == pygame.K_SPACE and player_rect.bottom >= 300:
-            #         player_gravity = -20
-
-            if event.type == obstacle_timer:
-                obstacle_group.add(Obstacle(choice(['fly', 'snail', 'snail', 'snail'])))
-                # if randint(0,2): # gives 0 or 1, randomly gives T or F
-                #     obstacle_rect_list.append(snail_surf.get_rect(bottomright = (randint(900, 1100), 300)))
-                # else: obstacle_rect_list.append(fly_surf.get_rect(bottomright = (randint(900, 1100), 200)))
-
-            if event.type == snail_animation_timer:
-                if snail_frame_index == 0: snail_frame_index = 1
-                else: snail_frame_index = 0
-                snail_surf = snail_frames[snail_frame_index]
-
-            if event.type == fly_animation_timer:
-                if fly_frame_index == 0: fly_frame_index = 1
-            else: fly_frame_index = 0
-            fly_surf = fly_frames[fly_frame_index]
-
-        else:
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                game_active = True
-                #snail_rect.left = 800
-                start_time = int(pygame.time.get_ticks() / 1000)
+		if game_active:
+			if event.type == obstacle_timer:
+				obstacle_group.add(Obstacle(choice(['dog','dog','dog'])))
+				
+			if event.type == dog_animation_timer:
+				if dog_frame_index == 0: dog_frame_index = 1
+				else: dog_frame_index = 0
+				dog_surf = dog_frames[dog_frame_index] 
 
 
+	if game_active:
+		for i in range(0, tiles):
+			screen.blit(back_trees_surface, (i * back_width + scroll, 0))
+			screen.blit(sky_surface, (i * back_width + scroll, 0))
+			screen.blit(mid_trees_surface, (i * back_width + scroll, 0))
+			screen.blit(front_trees_surface, (i * back_width + scroll, 0))
+		
+		score = display_score()
+		scroll -= 3
+		if abs(scroll) > back_width:
+			scroll = 0
+		
+		
+		
+		
+		player.draw(screen)
+		player.update()
 
-    if game_active:
-        screen.blit(back_surf, (0, 0)) # surface, (x,y) # blit means block image transfer # puts one surface on another
-        #screen.blit(ground_surf, (0, 300))
-        score = display_score()
-        bg_music = pygame.mixer.Sound('./Jumpin_Confetti//audio/music.wav')
-        bg_music.set_volume(0.1)
-        bg_music.play(loops = -1) #loops forever
-
-        player.draw(screen)
-        player.update()
-
-        obstacle_group.draw(screen)
-        obstacle_group.update()
-        # Obstacle movement
-        #obstacle_rect_list = obstacle_movement(obstacle_rect_list)
-
-        #collision
-        game_active = collision_sprite()
-        #game_active = collisions(player_rect, obstacle_rect_list)
+		obstacle_group.draw(screen)
+		obstacle_group.update()
 
 
-    else:
-        screen.fill((94,129,162)) #rgb color
-        screen.blit(snail_frame_1, player_stand_rect)
-        obstacle_rect_list.clear()
-        player_rect.midbottom = (600, 300) # in case you die during jump
-        player_gravity = 0 # in case you die suring jump
+		# collision 
+		game_active = collision_sprite()
+		
+	else:
+		screen.fill((99, 42, 59))
+		screen.blit(Confetti,Confetti_rect)
+		obstacle_rect_list.clear()
+		player_rect.midbottom = (80,420)
+		player_gravity = 0
 
-        score_message = test_font.render(f'Your score:  {score}', False, 'Blue')
-        score_message_rect = score_message.get_rect(center = (400, 340))
-        screen.blit(title_surf, title_rect)
+		score_message = test_font.render(f'Your score: {score}',False,(111,196,169))
+		score_message_rect = score_message.get_rect(center = (600,450))
+		screen.blit(game_name,game_name_rect)
 
-        if score == 0: screen.blit(instruction_surf, instruction_rect)
-        else: screen.blit(score_message, score_message_rect)
-    pygame.display.update()
-    clock.tick(60)  # While true, run while loop 60 times per second
+		if score == 0: screen.blit(game_message,game_message_rect)
+		else: screen.blit(score_message,score_message_rect)
+
+	pygame.display.update()
+	clock.tick(60)
