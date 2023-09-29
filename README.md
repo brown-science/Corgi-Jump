@@ -1,4 +1,4 @@
-# Jumpin-Fettys-game
+# Corgi Jump
 Simple obstacle jumping game made with Pygame. The character jumps over Confetti the corgi. The gif below was compressed to
 comply with Github's file size limit. You can play the game here!
 
